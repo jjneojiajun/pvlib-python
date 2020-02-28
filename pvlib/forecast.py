@@ -119,8 +119,8 @@ class ForecastModel(object):
         self.connected = False
         self.vert_level = vert_level
 
-    def connect_to_catalog(self):
-        self.catalog = TDSCatalog(self.catalog_url)
+    def connect_to_catalog(self, **kwargs):
+        self.catalog = TDSCatalog(self.catalog_url, **kwargs)
         self.fm_models = TDSCatalog(
             self.catalog.catalog_refs[self.model_type].href)
         self.fm_models_list = sorted(list(self.fm_models.catalog_refs.keys()))
@@ -131,10 +131,10 @@ class ForecastModel(object):
             raise ParseError(self.model_name + ' model may be unavailable.')
 
         try:
-            self.model = TDSCatalog(model_url)
+            self.model = TDSCatalog(model_url, **kwargs)
         except HTTPError:
             try:
-                self.model = TDSCatalog(model_url)
+                self.model = TDSCatalog(model_url, **kwargs)
             except HTTPError:
                 raise HTTPError(self.model_name + ' model may be unavailable.')
 
@@ -251,7 +251,7 @@ class ForecastModel(object):
         """
 
         if not self.connected:
-            self.connect_to_catalog()
+            self.connect_to_catalog(**kwargs)
 
         if vert_level is not None:
             self.vert_level = vert_level

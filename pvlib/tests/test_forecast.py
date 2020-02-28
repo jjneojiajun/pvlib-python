@@ -10,7 +10,6 @@ from conftest import requires_siphon, has_siphon, skip_windows
 
 pytestmark = pytest.mark.skipif(not has_siphon, reason='requires siphon')
 
-
 if has_siphon:
     with warnings.catch_warnings():
         # don't emit import warning
@@ -190,3 +189,14 @@ def test_cloud_cover_to_ghi_linear():
     assert_allclose(out, 1000)
     out = amodel.cloud_cover_to_ghi_linear(100, ghi_clear, offset=offset)
     assert_allclose(out, 250)
+
+
+def test_kwargs_in_get_processed_data():
+    amodel = GFS()
+    data = amodel.get_processed_data(latitude=_latitude,
+                                     longitude=_longitude,
+                                     start=_start,
+                                     end=_end,
+                                     headers={'User-Agent': 'Product', 'Front-End-Https': 'on'},
+                                     verify=False)
+    assert not data.empty
